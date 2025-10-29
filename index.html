@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SGPA Calculator</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #6dd5fa, #2980b9);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .container {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    input, button {
+      margin: 8px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input {
+      width: 150px;
+    }
+    button {
+      background-color: #27ae60;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2ecc71;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>SGPA Calculator</h1>
+  <div class="container">
+    <p>Enter marks and credits for each subject:</p>
+    <div id="subjects"></div>
+    <button onclick="addSubject()">+ Add Subject</button><br>
+    <button onclick="calculateSGPA()">Calculate SGPA</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let count = 0;
+
+    function addSubject() {
+      count++;
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <input type="text" placeholder="Subject ${count}" id="sub${count}">
+        <input type="number" placeholder="Marks (0-100)" id="marks${count}">
+        <input type="number" placeholder="Credits" id="credit${count}">
+      `;
+      document.getElementById("subjects").appendChild(div);
+    }
+
+    function getGradePoint(total) {
+      if (total >= 90) return 10;
+      else if (total >= 80) return 9;
+      else if (total >= 70) return 8;
+      else if (total >= 60) return 7;
+      else if (total >= 50) return 6;
+      else if (total >= 40) return 5;
+      else return 0;
+    }
+
+    function calculateSGPA() {
+      let totalPoints = 0, totalCredits = 0;
+      for (let i = 1; i <= count; i++) {
+        const marks = parseFloat(document.getElementById(`marks${i}`).value);
+        const credit = parseFloat(document.getElementById(`credit${i}`).value);
+        if (isNaN(marks) || isNaN(credit)) continue;
+        const grade = getGradePoint(marks);
+        totalPoints += grade * credit;
+        totalCredits += credit;
+      }
+      const sgpa = (totalPoints / totalCredits).toFixed(2);
+      document.getElementById("result").innerHTML = `Your SGPA = ${sgpa}`;
+    }
+  </script>
+</body>
+</html>
