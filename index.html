@@ -1,590 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SGPA & CGPA Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SGPA & CGPA Calculator</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Outfit:wght@500&display=swap" rel="stylesheet">
+
 <style>
-  :root{
-    --bg-dark-1:#030412; --bg-dark-2:#05102a;
-    --glass: rgba(255,255,255,0.06);
-    --muted: rgba(255,255,255,0.7);
-    --accent: #4de2ff;
-    --accent-2: #7af0c7;
-    --success: #7ef3c5;
-    --danger: #ff6b6b;
-    --card-radius:16px;
+  :root {
+    --bg-gradient-dark: radial-gradient(circle at 20% 20%, #0b132b, #1c2541, #3a506b);
+    --bg-gradient-light: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-light: rgba(255, 255, 255, 0.4);
+    --neon: #00d9ff;
   }
 
-  /* Light theme variables (applied when body.light) */
-  body.light {
-    --bg-dark-1: #f3f7fb;
-    --bg-dark-2: #e8eef6;
-    --glass: rgba(10,12,20,0.05);
-    --muted: rgba(10,20,30,0.75);
-    --accent: #0077ff;
-    --accent-2: #00bfa6;
-    --success: #0b8f5f;
-    --danger: #d64545;
-    color: #0b1220;
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    color: white;
+    background: var(--bg-gradient-dark);
+    height: 100vh;
+    overflow-x: hidden;
+    transition: background 1s ease-in-out;
   }
 
-  *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-  html,body{height:100%;margin:0;background: linear-gradient(180deg,var(--bg-dark-1),var(--bg-dark-2)); color:#eaf6ff; -webkit-font-smoothing:antialiased;}
-  body { transition: background 300ms ease, color 300ms ease; }
-
-  /* Night sky decor (only in dark mode) */
-  .sky {
-    position:fixed;inset:0;pointer-events:none;z-index:0;
-    background:
-      radial-gradient(circle at 10% 10%, rgba(255,255,255,0.03) 0, transparent 20%),
-      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.02) 0, transparent 12%);
-    mix-blend-mode:overlay;
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    text-align: center;
   }
-  .wrap {min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:1;position:relative}
 
   .card {
-    width:100%;max-width:1100px;padding:22px;border-radius:var(--card-radius);
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    backdrop-filter: blur(8px) saturate(120%);
-    border:1px solid rgba(255,255,255,0.04);
-    box-shadow: 0 10px 40px rgba(2,6,23,0.6);
-    color: inherit;
+    background: var(--glass);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    animation: fadeIn 1s ease;
   }
 
-  header.top {
-    display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:14px;
-  }
-  .brand {display:flex;gap:12px;align-items:center}
-  .logo {
-    width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    display:flex;align-items:center;justify-content:center;font-weight:700;color:#001821;font-size:20px;box-shadow:0 6px 18px rgba(0,0,0,0.35);
-  }
-  h1 {font-size:20px;margin:0}
-  .subtitle {font-size:13px;color:var(--muted);margin-top:2px}
-
-  .controlsTop {display:flex;gap:10px;align-items:center}
-  .themeToggle {
-    display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);cursor:pointer;color:var(--muted)
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
   }
 
-  /* profile/login */
-  .profile {
-    display:flex;gap:8px;align-items:center;background:var(--glass);padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+  input, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    margin: 8px 0;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 1em;
   }
-  .profile input {background:transparent;border:none;color:inherit;padding:6px 8px;border-radius:8px;min-width:140px;outline:none}
-  .profile label{font-size:12px;color:var(--muted);display:block}
 
-  /* layout grid */
-  .grid {display:grid;grid-template-columns:1fr 380px;gap:18px}
-  @media (max-width:980px){ .grid{grid-template-columns:1fr} }
-
-  /* left huge panel (main) */
-  .panel {padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03)}
-  .sectionTitle {display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  .sectionTitle h2 {margin:0;font-size:16px;color:var(--accent)}
-  .muted {font-size:13px;color:var(--muted)}
-
-  /* semesters list */
-  .semList {display:flex;flex-direction:column;gap:12px}
-  .semester {
-    border-radius:10px;padding:12px;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.03);
+  button {
+    background: var(--neon);
+    color: black;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
   }
-  .semHead {display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .semHead .semTitle {font-weight:700}
-  .semControls {display:flex;gap:8px}
 
-  .subjects {margin-top:10px;display:flex;flex-direction:column;gap:10px}
-  .subjectRow {display:grid;grid-template-columns: 1fr 80px 80px 80px 64px;gap:8px;align-items:center}
-  @media (max-width:780px){ .subjectRow{grid-template-columns: 1fr 80px 80px 60px} }
+  button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--neon);
+  }
 
-  .subjectRow input[type="text"]{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.25);color:inherit}
-  .subjectRow input[type="number"]{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.18);color:inherit}
-  .subjectRow .removeRow{padding:6px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer}
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+  }
 
-  .small {font-size:12px;color:var(--muted)}
+  .tab {
+    padding: 10px 20px;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
 
-  /* right panel summary */
-  .rightPanel {padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.03)}
-  .cardStat {display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-  .big {font-size:24px;font-weight:700;color:var(--success)}
-  .actionBtn {width:100%;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001821;font-weight:700;cursor:pointer}
-  .outline {background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+  .tab.active {
+    border-bottom: 2px solid var(--neon);
+    color: var(--neon);
+  }
 
-  /* results table */
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px;color:var(--muted)}
-  th{color:var(--accent);font-size:13px}
-  footer.note{margin-top:12px;font-size:12px;color:var(--muted)}
+  .hidden { display: none; }
 
-  /* tiny helpers */
-  .row {display:flex;gap:8px;align-items:center}
-  .select {padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.15);color:inherit}
-  .presetDropdown{min-width:220px}
+  .footer {
+    margin-top: 20px;
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 1.2em;
+  }
 </style>
 </head>
+
 <body>
-  <div class="sky" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="card" role="main" aria-labelledby="appTitle">
-      <header class="top">
-        <div class="brand" aria-hidden="false">
-          <div class="logo">SG</div>
-          <div>
-            <h1 id="appTitle">SGPA & CGPA Dashboard</h1>
-            <div class="subtitle">Professional SGPA calculator — dark glass theme with presets</div>
-          </div>
-        </div>
+  <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
 
-        <div class="controlsTop">
-          <!-- Theme Toggle -->
-          <button id="themeToggle" class="themeToggle" title="Toggle theme" aria-pressed="false">
-            <!-- svg icons -->
-            <span id="themeIcon" aria-hidden="true">🌙</span>
-            <span class="small">Dark</span>
-          </button>
-
-          <!-- Profile/Login (local) -->
-          <div class="profile" role="form" aria-label="Student profile">
-            <div style="display:flex;flex-direction:column">
-              <label class="small">Name</label>
-              <input id="inpName" aria-label="Student name" placeholder="Your name">
-            </div>
-            <div style="display:flex;flex-direction:column">
-              <label class="small">Roll</label>
-              <input id="inpRoll" aria-label="Student roll" placeholder="Roll no">
-            </div>
-            <button class="outline" id="saveProfile">Save</button>
-          </div>
-        </div>
-      </header>
-
-      <div class="grid">
-        <!-- LEFT: Semesters & Subjects -->
-        <main class="panel" aria-labelledby="semTitle">
-          <div class="sectionTitle">
-            <h2 id="semTitle">Semesters</h2>
-            <div class="muted">Add semesters, use presets, then calculate SGPA & CGPA</div>
-          </div>
-
-          <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px">
-            <button class="actionBtn" id="addSemesterBtn">+ Add Semester</button>
-
-            <select id="presetSelect" class="select presetDropdown" aria-label="Choose course preset">
-              <option value="">Choose preset subjects (college)</option>
-            </select>
-
-            <button id="applyPreset" class="outline">Apply preset to selected semester</button>
-          </div>
-
-          <div id="semList" class="semList" aria-live="polite" aria-atomic="true"></div>
-        </main>
-
-        <!-- RIGHT: Summary and actions -->
-        <aside class="rightPanel" aria-labelledby="summaryTitle">
-          <div class="cardStat">
-            <div class="small">Logged in as</div>
-            <div id="profileDisplay" class="small">— Not set —</div>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <div class="small">Latest SGPA</div>
-            <div id="latestSGPA" class="big">—</div>
-          </div>
-
-          <div style="margin-bottom:12px">
-            <div class="small">CGPA (All Semesters)</div>
-            <div id="cgpaAll" class="big">—</div>
-          </div>
-
-          <button id="calcAll" class="actionBtn">Calculate SGPA & CGPA</button>
-          <button id="saveAll" class="outline" style="margin-top:8px">Save Locally</button>
-          <button id="loadAll" class="outline" style="margin-top:8px">Load Saved</button>
-          <button id="exportReport" class="outline" style="margin-top:8px">Copy Result</button>
-
-          <div style="margin-top:14px">
-            <div class="small">Per-subject breakdown (last calc)</div>
-            <table id="detailsTable" aria-live="polite">
-              <thead><tr><th>Semester</th><th>Subject</th><th>Marks</th><th>Credits</th><th>GP</th><th>Weighted</th></tr></thead>
-              <tbody id="detailsBody"></tbody>
-            </table>
-          </div>
-
-          <footer class="note">Tip: Use presets to fill common course subjects. All data is stored locally in your browser only.</footer>
-        </aside>
-      </div>
+  <!-- LOGIN PAGE -->
+  <div class="container" id="login-page">
+    <div class="card">
+      <h2>Welcome 👋</h2>
+      <input type="text" id="name" placeholder="Enter your name" />
+      <input type="text" id="roll" placeholder="Enter Roll Number" />
+      <button onclick="startApp()">Start</button>
     </div>
   </div>
 
-<script>
-/* ---------------------------
-   Data: predefined presets
-   Add your college presets here.
-   Each preset is array of subjects: {name,credits,type}
-   type = 'theory' or 'practical'
-   --------------------------- */
-const PRESETS = {
-  "CSE First Year (R23)": [
-    {name:"Computer Science (Th)", credits:3, type:'theory'},
-    {name:"Physics (Th)", credits:3, type:'theory'},
-    {name:"Maths (Th)", credits:3, type:'theory'},
-    {name:"EVS (Th)", credits:2, type:'theory'},
-    {name:"IKS (Th)", credits:1, type:'theory'},
-    {name:"CS Practical", credits:1.5, type:'practical'},
-    {name:"Physics Practical", credits:1.5, type:'practical'},
-    {name:"Graphics Practical", credits:1.5, type:'practical'},
-    {name:"Communication Practical", credits:1.5, type:'practical'}
-  ],
-  "ECE First Year (Sample)": [
-    {name:"Electronics (Th)", credits:3, type:'theory'},
-    {name:"AI (Th)", credits:2, type:'theory'},
-    {name:"Chemistry (Th)", credits:2, type:'theory'},
-    {name:"Maths (Th)", credits:3, type:'theory'},
-    {name:"Humanities (Th)", credits:1, type:'theory'},
-    {name:"Design Thinking (Th)", credits:1, type:'theory'},
-    {name:"Electronics Practical", credits:1.5, type:'practical'},
-    {name:"AI Practical", credits:1.5, type:'practical'},
-    {name:"Chemistry Practical", credits:1, type:'practical'},
-    {name:"Mechanical Practical", credits:1.5, type:'practical'}
-  ]
-};
-
-/* ---------------------------
-   Utility functions
---------------------------- */
-function getGradePoint(total) {
-  if (total >= 90) return 10;
-  if (total >= 80) return 9;
-  if (total >= 70) return 8;
-  if (total >= 60) return 7;
-  if (total >= 50) return 6;
-  if (total >= 40) return 5;
-  return 0;
-}
-function clamp(n,min,max){ return Math.max(min, Math.min(max, Number(n) || 0)); }
-function escapeHtml(s){ if (!s) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
-
-/* ---------------------------
-   DOM helpers & state
---------------------------- */
-const semList = document.getElementById('semList');
-const presetSelect = document.getElementById('presetSelect');
-const addSemesterBtn = document.getElementById('addSemesterBtn');
-const applyPresetBtn = document.getElementById('applyPreset');
-const calcAllBtn = document.getElementById('calcAll');
-const saveAllBtn = document.getElementById('saveAll');
-const loadAllBtn = document.getElementById('loadAll');
-const exportBtn = document.getElementById('exportReport');
-const latestSGPAEl = document.getElementById('latestSGPA');
-const cgpaAllEl = document.getElementById('cgpaAll');
-const detailsBody = document.getElementById('detailsBody');
-const inpName = document.getElementById('inpName');
-const inpRoll = document.getElementById('inpRoll');
-const saveProfileBtn = document.getElementById('saveProfile');
-const profileDisplay = document.getElementById('profileDisplay');
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon = document.getElementById('themeIcon');
-
-/* populate preset dropdown */
-function initPresets(){
-  const keys = Object.keys(PRESETS);
-  keys.forEach(k=>{
-    const opt = document.createElement('option');
-    opt.value = k; opt.textContent = k;
-    presetSelect.appendChild(opt);
-  });
-}
-
-/* semester structure:
-   {id, label, subjects: [ {name,credits,type,mid,end,total} ] }
-*/
-let SEMS = []; // current semesters in memory
-
-function newSemester(label){
-  return { id: 's'+Date.now().toString(36).slice(-6), label: label || ('Sem ' + (SEMS.length+1)), subjects: [] };
-}
-
-/* render semester UI */
-function renderSemesters(){
-  semList.innerHTML = '';
-  SEMS.forEach((sem, idx) => {
-    const el = document.createElement('div');
-    el.className = 'semester';
-    el.dataset.sid = sem.id;
-    el.innerHTML = `
-      <div class="semHead">
-        <div>
-          <div class="semTitle">${escapeHtml(sem.label)}</div>
-          <div class="small muted">Subjects: ${sem.subjects.length} • Credits: ${sem.subjects.reduce((s,x)=>s+(Number(x.credits)||0),0)}</div>
-        </div>
-        <div class="semControls">
-          <button class="outline btn" data-action="add-sub">+ Subject</button>
-          <button class="outline btn" data-action="rename">Rename</button>
-          <button class="outline btn" data-action="remove-sem">Remove</button>
-        </div>
+  <!-- MAIN APP -->
+  <div class="container hidden" id="app-page">
+    <h2 id="welcome"></h2>
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" id="tab-sgpa" onclick="switchTab('sgpa')">SGPA</div>
+        <div class="tab" id="tab-cgpa" onclick="switchTab('cgpa')">CGPA</div>
       </div>
-      <div class="subjects" aria-label="${escapeHtml(sem.label)} subjects"></div>
-    `;
-    semList.appendChild(el);
 
-    const subjectsContainer = el.querySelector('.subjects');
-    // render subject rows
-    sem.subjects.forEach((s, sIdx) => {
-      const row = document.createElement('div');
-      row.className = 'subjectRow';
-      // theory fields: name, credits, mid, end, remove
-      if (s.type === 'theory') {
-        row.innerHTML = `
-          <input type="text" class="subName" placeholder="Subject name" value="${escapeHtml(s.name)}" aria-label="Subject name">
-          <input type="number" class="subCredit" placeholder="Credits" step="0.5" min="0" value="${escapeHtml(s.credits)}" aria-label="Credits">
-          <input type="number" class="mid" placeholder="Mid" min="0" max="30" value="${s.mid||''}" aria-label="Mid marks (0-30)">
-          <input type="number" class="end" placeholder="End" min="0" max="70" value="${s.end||''}" aria-label="End marks (0-70)">
-          <button class="removeRow" data-action="remove-${sIdx}" title="Remove subject">✕</button>
-        `;
-      } else {
-        row.innerHTML = `
-          <input type="text" class="subName" placeholder="Subject name" value="${escapeHtml(s.name)}" aria-label="Subject name">
-          <input type="number" class="subCredit" placeholder="Credits" step="0.5" min="0" value="${escapeHtml(s.credits)}" aria-label="Credits">
-          <input type="number" class="total" placeholder="Total (0-100)" min="0" max="100" value="${s.total||''}" aria-label="Total marks (0-100)">
-          <div></div>
-          <button class="removeRow" data-action="remove-${sIdx}" title="Remove subject">✕</button>
-        `;
-      }
-      subjectsContainer.appendChild(row);
+      <!-- SGPA Calculator -->
+      <div id="sgpa-section">
+        <select id="subject-preset" onchange="loadPreset()">
+          <option value="">Select Course Preset</option>
+          <option value="ds">B.Tech Data Science (R23)</option>
+          <option value="cse">B.Tech CSE</option>
+          <option value="ece">B.Tech ECE</option>
+        </select>
 
-      // attach events: remove, input change
-      row.querySelector('.removeRow').addEventListener('click', ()=>{
-        sem.subjects.splice(sIdx,1);
-        renderSemesters();
-      });
-      // live saving of input values to SEMS structure
-      const inputs = row.querySelectorAll('input');
-      inputs.forEach(inp=>{
-        inp.addEventListener('input', ()=>{
-          // update structure
-          const name = row.querySelector('.subName').value.trim();
-          const credits = parseFloat(row.querySelector('.subCredit').value) || 0;
-          if (s.type === 'theory') {
-            s.name = name; s.credits = credits;
-            s.mid = row.querySelector('.mid').value;
-            s.end = row.querySelector('.end').value;
-          } else {
-            s.name = name; s.credits = credits;
-            s.total = row.querySelector('.total').value;
-          }
-          // optionally: auto-calc live
-        });
-      });
-    });
+        <div id="subjects"></div>
+        <button onclick="addSubject()">+ Add Subject</button>
+        <button onclick="calcSGPA()">Calculate SGPA</button>
+        <h3 id="sgpa-result"></h3>
+      </div>
 
-    // controls: add subject, rename, remove
-    el.querySelector('[data-action="add-sub"]').addEventListener('click', ()=>{
-      // default push a theory subject
-      sem.subjects.push({name:'New Subject', credits:3, type:'theory', mid:'', end:''});
-      renderSemesters();
-    });
-    el.querySelector('[data-action="rename"]').addEventListener('click', ()=>{
-      const newName = prompt('Rename semester', sem.label);
-      if (newName) { sem.label = newName.trim(); renderSemesters(); }
-    });
-    el.querySelector('[data-action="remove-sem"]').addEventListener('click', ()=>{
-      if (!confirm('Remove entire semester?')) return;
-      SEMS = SEMS.filter(s=>s.id !== sem.id);
-      renderSemesters();
-    });
-  });
+      <!-- CGPA Calculator -->
+      <div id="cgpa-section" class="hidden">
+        <div id="semesters"></div>
+        <button onclick="addSemester()">+ Add Semester</button>
+        <button onclick="calcCGPA()">Calculate CGPA</button>
+        <h3 id="cgpa-result"></h3>
+      </div>
+    </div>
+
+    <div class="footer">Made with 💙 for students</div>
+  </div>
+
+<script>
+let isDark = true;
+
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.style.background = isDark ? 
+    "radial-gradient(circle at 20% 20%, #0b132b, #1c2541, #3a506b)" :
+    "linear-gradient(120deg, #a1c4fd, #c2e9fb)";
+  document.querySelector(".theme-toggle").textContent = isDark ? "🌙" : "☀️";
 }
 
-/* Add a preset into a chosen semester by id */
-function applyPresetToSemester(semId, presetName){
-  if (!PRESETS[presetName]) { alert('Invalid preset'); return; }
-  const preset = PRESETS[presetName];
-  const sem = SEMS.find(s=>s.id === semId);
-  if (!sem) { alert('Select a semester first (add one)'); return; }
-  // append preset subjects (clone)
-  preset.forEach(p=>{
-    sem.subjects.push({name:p.name, credits:p.credits, type:p.type, mid:'', end:'', total:''});
-  });
-  renderSemesters();
+function startApp() {
+  const name = document.getElementById('name').value.trim();
+  const roll = document.getElementById('roll').value.trim();
+  if (!name || !roll) { alert('Please fill in both fields'); return; }
+  localStorage.setItem('student', JSON.stringify({name, roll}));
+  document.getElementById('welcome').textContent = `Welcome, ${name} 👋`;
+  document.getElementById('login-page').classList.add('hidden');
+  document.getElementById('app-page').classList.remove('hidden');
 }
 
-/* Add semester (UI hook) */
-addSemesterBtn.addEventListener('click', ()=>{
-  const sem = newSemester();
-  SEMS.push(sem);
-  renderSemesters();
-  // focus: select first newly added semester's add-sub button
-});
+function switchTab(tab) {
+  document.getElementById('sgpa-section').classList.toggle('hidden', tab !== 'sgpa');
+  document.getElementById('cgpa-section').classList.toggle('hidden', tab !== 'cgpa');
+  document.getElementById('tab-sgpa').classList.toggle('active', tab === 'sgpa');
+  document.getElementById('tab-cgpa').classList.toggle('active', tab === 'cgpa');
+}
 
-/* Apply preset to first semester by default (or chosen) */
-applyPresetBtn.addEventListener('click', ()=>{
-  const sel = presetSelect.value;
-  if (!sel) return alert('Choose a preset');
-  // if no semester exists, create one
-  if (SEMS.length === 0) { SEMS.push(newSemester()); }
-  // apply to last semester (user can choose later)
-  const targetSem = SEMS[SEMS.length-1].id;
-  applyPresetToSemester(targetSem, sel);
-});
+function addSubject() {
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <input placeholder="Subject Name">
+    <input type="number" placeholder="Credit" min="1" max="10">
+    <select>
+      <option value="10">O (10)</option>
+      <option value="9">A+ (9)</option>
+      <option value="8">A (8)</option>
+      <option value="7">B+ (7)</option>
+      <option value="6">B (6)</option>
+      <option value="5">C (5)</option>
+      <option value="0">F (0)</option>
+    </select>
+  `;
+  document.getElementById('subjects').appendChild(div);
+}
 
-/* calculate SGPA for each semester and CGPA across them */
-function calculateAll(){
-  const details = []; // per-subject for table
-  let cgpaPoints = 0;
-  let cgpaCredits = 0;
-  let latestSGPA = null;
-
-  SEMS.forEach((sem, semIdx) => {
-    let semPoints = 0, semCredits = 0;
-    sem.subjects.forEach(s=>{
-      const credit = Number(s.credits) || 0;
-      if (!(credit > 0)) return; // skip
-      let totalMarks = 0;
-      if (s.type === 'theory') {
-        const mid = clamp(s.mid, 0, 30);
-        const end = clamp(s.end, 0, 70);
-        totalMarks = mid + end;
-      } else {
-        totalMarks = clamp(s.total, 0, 100);
-      }
-      const gp = getGradePoint(totalMarks);
-      semPoints += gp * credit;
-      semCredits += credit;
-      details.push({semester: sem.label, subject: s.name, marks: totalMarks, credits: credit, gp, weighted: gp*credit});
-    });
-
-    const semSGPA = semCredits > 0 ? (semPoints / semCredits) : null;
-    if (semSGPA !== null) {
-      cgpaPoints += semPoints;
-      cgpaCredits += semCredits;
-      latestSGPA = semSGPA;
+function calcSGPA() {
+  const rows = document.querySelectorAll('#subjects > div');
+  let totalPoints = 0, totalCredits = 0;
+  rows.forEach(r => {
+    const credit = parseFloat(r.children[1].value);
+    const grade = parseFloat(r.children[2].value);
+    if (credit && grade >= 0) {
+      totalCredits += credit;
+      totalPoints += credit * grade;
     }
   });
+  if (totalCredits === 0) return alert("Enter valid subjects!");
+  const sgpa = (totalPoints / totalCredits).toFixed(2);
+  document.getElementById('sgpa-result').textContent = `Your SGPA: ${sgpa}`;
+}
 
-  const cgpa = cgpaCredits > 0 ? (cgpaPoints / cgpaCredits) : null;
+function addSemester() {
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <input type="number" placeholder="SGPA" step="0.01" min="0" max="10">
+    <input type="number" placeholder="Credits" min="1">
+  `;
+  document.getElementById('semesters').appendChild(div);
+}
 
-  // update UI
-  latestSGPAEl.textContent = latestSGPA === null ? '—' : latestSGPA.toFixed(2);
-  cgpaAllEl.textContent = cgpa === null ? '—' : cgpa.toFixed(2);
-
-  // build details table
-  detailsBody.innerHTML = '';
-  details.forEach(d=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${escapeHtml(d.semester)}</td>
-                    <td>${escapeHtml(d.subject)}</td>
-                    <td>${d.marks}</td>
-                    <td>${d.credits}</td>
-                    <td>${d.gp}</td>
-                    <td>${d.weighted.toFixed(2)}</td>`;
-    detailsBody.appendChild(tr);
+function calcCGPA() {
+  const rows = document.querySelectorAll('#semesters > div');
+  let totalCredits = 0, totalWeighted = 0;
+  rows.forEach(r => {
+    const sgpa = parseFloat(r.children[0].value);
+    const credits = parseFloat(r.children[1].value);
+    if (sgpa && credits) {
+      totalCredits += credits;
+      totalWeighted += sgpa * credits;
+    }
   });
-
-  return { latestSGPA: latestSGPA, cgpa, details };
+  if (totalCredits === 0) return alert("Enter valid semesters!");
+  const cgpa = (totalWeighted / totalCredits).toFixed(2);
+  document.getElementById('cgpa-result').textContent = `Your CGPA: ${cgpa}`;
 }
 
-calcAllBtn.addEventListener('click', ()=>{
-  const res = calculateAll();
-  if (!res || res.latestSGPA===null) alert('No credits entered. Please add subjects and credits.');
-});
+function loadPreset() {
+  const preset = document.getElementById('subject-preset').value;
+  const subjectsDiv = document.getElementById('subjects');
+  subjectsDiv.innerHTML = '';
 
-/* Save/load functions (localStorage) */
-function saveAllLocal(){
-  const state = {
-    profile: {name: inpName.value.trim(), roll: inpRoll.value.trim()},
-    semesters: SEMS
-  };
-  localStorage.setItem('sgpa_v2_state', JSON.stringify(state));
-  alert('Saved locally (browser).');
-}
-function loadAllLocal(){
-  const raw = localStorage.getItem('sgpa_v2_state');
-  if (!raw) return alert('No saved data found.');
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed.profile){ inpName.value = parsed.profile.name || ''; inpRoll.value = parsed.profile.roll || ''; updateProfileDisplay(); }
-    if (Array.isArray(parsed.semesters)) { SEMS = parsed.semesters; }
-    renderSemesters();
-    alert('Loaded saved data.');
-  } catch(e){ console.error(e); alert('Failed to load saved data.'); }
-}
-saveAllBtn.addEventListener('click', saveAllLocal);
-loadAllBtn.addEventListener('click', loadAllLocal);
+  let subjects = [];
+  if (preset === 'ds') subjects = [
+    ['Linear Algebra', 4], ['Data Structures', 3], ['Statistics', 3], ['Python Programming', 3], ['AI Basics', 2]
+  ];
+  else if (preset === 'cse') subjects = [
+    ['Operating Systems', 3], ['DBMS', 3], ['Computer Networks', 3], ['Java', 3], ['Algorithms', 4]
+  ];
+  else if (preset === 'ece') subjects = [
+    ['Analog Circuits', 3], ['Digital Systems', 4], ['Signals & Systems', 3], ['Electromagnetics', 3]
+  ];
 
-/* export/copy result as formatted text */
-exportBtn.addEventListener('click', ()=>{
-  const { latestSGPA, cgpa, details } = (function(){ const r = calculateAll(); return {latestSGPA:r.latestSGPA, cgpa:r.cgpa, details: Array.from(detailsBody.querySelectorAll('tr')).map(tr=>Array.from(tr.children).map(td=>td.textContent).join(' | ')) }; })();
-  let text = `SGPA Report\nName: ${inpName.value || '—'}\nRoll: ${inpRoll.value || '—'}\nCGPA: ${cgpaAllEl.textContent}\nLatest SGPA: ${latestSGPA===null? '—': latestSGPA.toFixed(2)}\n\nDetails:\n`;
-  const rows = Array.from(detailsBody.querySelectorAll('tr'));
-  rows.forEach(r=>{
-    const cols = Array.from(r.children).map(c=>c.textContent);
-    text += cols.join(' | ') + '\n';
+  subjects.forEach(s => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <input value="${s[0]}">
+      <input type="number" value="${s[1]}" min="1">
+      <select>
+        <option value="10">O (10)</option>
+        <option value="9">A+ (9)</option>
+        <option value="8">A (8)</option>
+        <option value="7">B+ (7)</option>
+        <option value="6">B (6)</option>
+        <option value="5">C (5)</option>
+        <option value="0">F (0)</option>
+      </select>
+    `;
+    subjectsDiv.appendChild(div);
   });
-  navigator.clipboard.writeText(text).then(()=>{ alert('Report copied to clipboard'); }, ()=>{ alert('Copy failed.'); });
-});
-
-/* profile save */
-saveProfileBtn.addEventListener('click', ()=>{
-  updateProfileDisplay();
-  saveAllLocal();
-});
-function updateProfileDisplay(){
-  const n = inpName.value.trim(); const r = inpRoll.value.trim();
-  profileDisplay.textContent = n ? `${n} • ${r||'—'}` : '— Not set —';
 }
-
-/* Theme toggle */
-function setTheme(isLight){
-  if (isLight) {
-    document.body.classList.add('light'); themeIcon.textContent = '☀️'; themeToggle.setAttribute('aria-pressed','true');
-  } else {
-    document.body.classList.remove('light'); themeIcon.textContent = '🌙'; themeToggle.setAttribute('aria-pressed','false');
-  }
-  localStorage.setItem('sgpa_theme_light',''+Boolean(isLight));
-}
-themeToggle.addEventListener('click', ()=>{
-  const isLight = document.body.classList.contains('light');
-  setTheme(!isLight);
-});
-
-/* init */
-function init(){
-  initPresets();
-  // load theme
-  const themeSaved = localStorage.getItem('sgpa_theme_light');
-  setTheme(themeSaved === 'true');
-  // load saved state if present
-  const raw = localStorage.getItem('sgpa_v2_state');
-  if (raw) {
-    try { const parsed = JSON.parse(raw); if (parsed.profile){ inpName.value = parsed.profile.name || ''; inpRoll.value = parsed.profile.roll || ''; updateProfileDisplay(); } if (Array.isArray(parsed.semesters) && parsed.semesters.length>0){ SEMS = parsed.semesters; } }
-    catch(e){ console.warn('invalid saved state'); }
-  }
-  if (SEMS.length === 0) {
-    // create a default sample semester
-    SEMS.push(newSemester('Semester 1'));
-    // add sample preset automatically to show users
-    PRESETS['CSE First Year (R23)']?.forEach(p=> SEMS[0].subjects.push(Object.assign({}, {name:p.name, credits:p.credits, type:p.type, mid:'', end:'', total:''})));
-  }
-  renderSemesters();
-}
-init();
-
-/* Expose applyPreset to UI for selecting which semester to apply; for simplicity we apply to last: */
-presetSelect.addEventListener('change', ()=>{/* no-op */});
-
-/* helper: apply preset to selected sem via a prompt to pick index */
-document.getElementById('applyPreset').addEventListener('click', ()=>{
-  if (!presetSelect.value) return alert('Choose a preset first');
-  if (SEMS.length === 0) { alert('Add a semester first'); return; }
-  // ask user to select semester index (1..n) quickly
-  const names = SEMS.map((s,i)=>`${i+1}: ${s.label}`).join('\n');
-  let choice = prompt(`Apply preset to which semester?\n${names}\nEnter number (1-${SEMS.length}) or leave blank for last:`);
-  if (!choice) choice = SEMS.length.toString();
-  const id = parseInt(choice) - 1;
-  if (isNaN(id) || id < 0 || id >= SEMS.length) return alert('Invalid choice');
-  applyPresetToSemester(SEMS[id].id, presetSelect.value);
-});
 </script>
 </body>
 </html>
