@@ -33,8 +33,8 @@
   }
 
   *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-  html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, #07142a 0%, #000 40%);color:#eaf6ff}
-  body{transition:background 350ms ease,color 350ms ease}
+  html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, #07142a 0%, #000 40%);color:#eaf6ff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
+  body{transition:background 350ms ease,color 350ms ease; touch-action:auto; -webkit-text-size-adjust:100%}
 
   .sky {
     position: fixed; inset: 0; z-index: 0; pointer-events:none;
@@ -44,7 +44,7 @@
     mix-blend-mode: overlay;
   }
 
-  .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;z-index:1;position:relative}
+  .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;z-index:1;position:relative; -webkit-overflow-scrolling: touch;}
   .card{
     width:100%;max-width:var(--max-width);padding:22px;border-radius:var(--card-radius);
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
@@ -52,7 +52,7 @@
     box-shadow: 0 12px 40px rgba(2,6,23,0.6);
     border: 1px solid rgba(255,255,255,0.03);
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* keep desktop unchanged */
   }
 
   header.top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -131,53 +131,104 @@
   .glow { box-shadow: 0 8px 30px rgba(0,234,255,0.06); transition: box-shadow 350ms ease; }
   .glow:hover { box-shadow: 0 12px 44px rgba(0,234,255,0.12); transform: translateY(-2px); }
 
+  /* Result popup (glass) */
+  .resultPopupOverlay {
+    position: fixed; inset: 0; display:none; z-index:10050;
+    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45));
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .resultPopup {
+    width: 620px; max-width:95%; border-radius:14px; padding:18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    backdrop-filter: blur(10px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: inherit; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .resultHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .resultMain{display:flex;gap:16px;align-items:center}
+  .resultValues{flex:1}
+  .resultValues .big{font-size:36px}
+  .closePopup{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px;cursor:pointer;color:var(--muted)}
+
+  /* SGPA color bar (inside popup and persistent) */
+  .sgpaBarWrap{margin-top:12px}
+  .sgpaBar{
+    height:18px;border-radius:10px;overflow:hidden;border:1px solid rgba(0,0,0,0.12);display:flex;
+  }
+  .sgpaSeg{flex:1;height:100%}
+  .segRed{background:linear-gradient(90deg,#ff6b6b,#ff3b3b)}
+  .segYellow{background:linear-gradient(90deg,#ffd166,#ffb84d)}
+  .segLightGreen{background:linear-gradient(90deg,#9ff3c8,#55e8a6)}
+  .segDarkGreen{background:linear-gradient(90deg,#2bd97b,#0fa65f)}
+  .sgpaMarker{position:relative}
+  .markerDot{position:absolute;top:-6px;width:12px;height:12px;border-radius:50%;background:#001821;border:3px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,0.4);left:0%;transform:translateX(-50%);}
+
+  /* small persistent display in rightPanel */
+  .persistentBarWrap{margin-top:12px}
+  .persistentBarLabel{font-size:13px;color:var(--muted);margin-bottom:6px}
+
   @media (max-width:560px){
     .profile input{min-width:80px}
     .subjectRow{grid-template-columns: 1fr 70px 70px 60px;}
+  }
+
+  /* 📱 Mobile Responsive Fix (keeps PC layout unchanged) */
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+      overflow-x: auto; /* ensures horizontal panning possible on small devices */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .wrap { padding: 18px 8px; }
+
+    /* allow card inner content to be scrolled on small screens if it overflows */
+    .card { overflow: visible; }
+
+    .card, .loginCard {
+      width: 95%;
+      margin: 10px auto;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    input, select, button {
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .subjectRow {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    h1, h2 {
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    .add-semester-btn {
+      width: 100%;
+      font-size: 1rem;
+      padding: 12px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+    }
+  }
+footer {
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  opacity: 0.6;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  color: #ccc;
 }
-
-/* 📱 Mobile Responsive Fix (keeps PC layout unchanged) */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-    overflow-x: auto; /* ✅ optional, ensures smooth scrolling */
-  }
-
-  .card, .loginCard {
-    width: 95%;
-    margin: 10px auto;
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-  }
-
-  input, select, button {
-    width: 100%;
-    font-size: 0.95rem;
-  }
-
-  .subjectRow {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  h1, h2 {
-    font-size: 1.3rem;
-    text-align: center;
-  }
-
-  .add-semester-btn {
-    width: 100%;
-    font-size: 1rem;
-    padding: 12px;
-  }
-
-  footer {
-    text-align: center;
-    font-size: 0.85rem;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -267,6 +318,21 @@
             <div id="cgpaAll" class="big">—</div>
           </div>
 
+          <!-- persistent SGPA bar (updated after calculation) -->
+          <div id="persistentBar" class="persistentBarWrap" aria-hidden="false" style="display:none">
+            <div class="persistentBarLabel">SGPA Visual</div>
+            <div class="sgpaBarWrap">
+              <div class="sgpaBar sgpaMarker" id="persistentBarInner">
+                <div class="sgpaSeg segRed"></div>
+                <div class="sgpaSeg segYellow"></div>
+                <div class="sgpaSeg segLightGreen"></div>
+                <div class="sgpaSeg segDarkGreen"></div>
+                <div class="markerDot" id="persistentMarker" style="left:0%"></div>
+              </div>
+            </div>
+            <div id="persistentText" class="muted" style="margin-top:6px">Latest SGPA: —</div>
+          </div>
+
           <button id="calcAll" class="actionBtn glow">Calculate SGPA & CGPA</button>
           <button id="saveAll" class="outline" style="margin-top:10px">Save Record</button>
           <button id="viewSaved" class="outline" style="margin-top:8px">View Saved Records</button>
@@ -282,6 +348,48 @@
 
           <footer class="note">Tip: Data stored locally on your browser only. Use "Save Record" to preserve names/rolls for comparison.</footer>
         </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translucent popup overlay for results -->
+  <div id="resultPopupOverlay" class="resultPopupOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="resultPopup" role="document" aria-labelledby="resultTitle">
+      <div class="resultHeader">
+        <div>
+          <h3 id="resultTitle" style="margin:0;color:var(--accent)">Calculation Results</h3>
+          <div class="muted" id="resultSubtitle">SGPA & CGPA summary</div>
+        </div>
+        <div>
+          <button id="closeResult" class="closePopup" aria-label="Close results">Close</button>
+        </div>
+      </div>
+
+      <div class="resultMain">
+        <div class="resultValues">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div>
+              <div class="muted">Latest SGPA</div>
+              <div id="popupSGPA" class="big">—</div>
+            </div>
+            <div>
+              <div class="muted">CGPA</div>
+              <div id="popupCGPA" class="big">—</div>
+            </div>
+          </div>
+
+          <div class="sgpaBarWrap">
+            <div class="sgpaBar" id="popupBar">
+              <div class="sgpaSeg segRed"></div>
+              <div class="sgpaSeg segYellow"></div>
+              <div class="sgpaSeg segLightGreen"></div>
+              <div class="sgpaSeg segDarkGreen"></div>
+              <div class="markerDot" id="popupMarker" style="left:0%"></div>
+            </div>
+          </div>
+
+          <div id="popupAdvice" class="muted" style="margin-top:10px">—</div>
+        </div>
       </div>
     </div>
   </div>
@@ -313,6 +421,7 @@
 /* ============================
    Small upgrades to existing JS
    (keeps your base functions mostly intact)
+   Added persistent bar + translucent popup logic + mobile scroll fixes
    ============================ */
 
 /* Presets */
@@ -353,7 +462,7 @@ function getGradePoint(total) {
   return 0;
 }
 function clamp(n,min,max){ return Math.max(min, Math.min(max, Number(n) || 0)); }
-function escapeHtml(s){ if (!s) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function escapeHtml(s){ if (!s && s !== 0) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
 
 /* DOM refs */
 const semList = document.getElementById('semList');
@@ -383,6 +492,22 @@ const modalBody = document.getElementById('modalBody');
 const modalTitle = document.getElementById('modalTitle');
 const closeModal = document.getElementById('closeModal');
 const clearAllBtn = document.getElementById('clearAllBtn');
+
+/* popup refs */
+const resultPopupOverlay = document.getElementById('resultPopupOverlay');
+const popupSGPA = document.getElementById('popupSGPA');
+const popupCGPA = document.getElementById('popupCGPA');
+const popupMarker = document.getElementById('popupMarker');
+const popupBar = document.getElementById('popupBar');
+const popupAdvice = document.getElementById('popupAdvice');
+const closeResult = document.getElementById('closeResult');
+
+const persistentBar = document.getElementById('persistentBar');
+const persistentMarker = document.getElementById('persistentMarker');
+const persistentText = document.getElementById('persistentText');
+const persistentBarInner = document.getElementById('persistentBarInner');
+
+let HIDE_POPUP_ON_CLOSE = false;
 
 /* State */
 let SEMS = [];
@@ -476,7 +601,6 @@ function renderSemesters(){
       typeSel.addEventListener('change', (e)=>{
         s.type = e.target.value;
         showFieldsForType(s.type);
-        // reset values if switching type maybe
       });
 
       // remove handler
@@ -554,6 +678,22 @@ function applyPresetToSemester(semId, presetName){
   renderSemesters();
 }
 
+/* helper to compute marker left% based on SGPA (0-10) */
+function sgpaToPercent(sgpa){
+  // map 0..10 => 0%..100%
+  if (sgpa === null || sgpa === undefined) return 0;
+  const v = Math.max(0, Math.min(10, Number(sgpa)||0));
+  return (v/10)*100;
+}
+function getAdviceForSGPA(sgpa){
+  if (sgpa === null) return '—';
+  const v = Number(sgpa);
+  if (v <= 4) return 'Poor — needs improvement';
+  if (v <= 6) return 'Average — keep working';
+  if (v <= 8) return 'Good — nice!';
+  return 'Excellent — great job!';
+}
+
 /* Calculate SGPA and CGPA (unchanged logic, but handles dynamic types) */
 function calculateAll(){
   const details = [];
@@ -609,6 +749,55 @@ function calculateAll(){
   return LAST_CALC;
 }
 
+/* Show popup + persistent bar */
+function showResultPopup(calc){
+  if (!calc) return;
+  const latest = calc.latestSGPA;
+  const cgpa = calc.cgpa;
+
+  // populate popup
+  popupSGPA.textContent = latest === null ? '—' : (Number(latest).toFixed(2));
+  popupCGPA.textContent = cgpa === null ? '—' : (Number(cgpa).toFixed(2));
+  popupAdvice.textContent = getAdviceForSGPA(latest);
+
+  // marker position
+  const pct = sgpaToPercent(latest);
+  popupMarker.style.left = pct + '%';
+
+  // show overlay
+  resultPopupOverlay.style.display = 'flex';
+  resultPopupOverlay.setAttribute('aria-hidden','false');
+  // also update persistent bar (so it stays after closing)
+  updatePersistentBar(latest);
+}
+
+/* Update persistent bar area (right panel) */
+function updatePersistentBar(latest){
+  if (latest === null || latest === undefined) {
+    persistentBar.style.display = 'none';
+    return;
+  }
+  persistentBar.style.display = 'block';
+  const pct = sgpaToPercent(latest);
+  persistentMarker.style.left = pct + '%';
+  persistentText.textContent = 'Latest SGPA: ' + (Number(latest).toFixed(2));
+}
+
+/* Popup close */
+closeResult.addEventListener('click', ()=>{
+  resultPopupOverlay.style.display = 'none';
+  resultPopupOverlay.setAttribute('aria-hidden','true');
+  // persistent bar remains (already updated)
+});
+
+/* Close popup on overlay click */
+resultPopupOverlay.addEventListener('click', (e)=>{
+  if (e.target === resultPopupOverlay){
+    resultPopupOverlay.style.display = 'none';
+    resultPopupOverlay.setAttribute('aria-hidden','true');
+  }
+});
+
 /* CGPA manual entries (unchanged) */
 const cgpaList = document.getElementById('cgpaList');
 const addCgpaRowBtn = document.getElementById('addCgpaRow');
@@ -625,8 +814,8 @@ function addCgpaRow(sgpa='', credits=''){
   cgpaList.appendChild(div);
   div.querySelector('button').addEventListener('click', ()=>div.remove());
 }
-addCgpaRowBtn.addEventListener('click', ()=>addCgpaRow());
-calcCgpaBtn.addEventListener('click', ()=>{
+addCgpaRowBtn?.addEventListener('click', ()=>addCgpaRow());
+calcCgpaBtn?.addEventListener('click', ()=>{
   const rows = Array.from(cgpaList.querySelectorAll('.semester'));
   let totalCredits = 0, totalWeighted=0;
   rows.forEach(r=>{
@@ -711,6 +900,10 @@ function loadRecordToUI(roll){
     tr.innerHTML = `<td>${escapeHtml(d.semester)}</td><td>${escapeHtml(d.subject)}</td><td>${d.marks}</td><td>${d.credits}</td><td>${d.gp}</td><td>${d.weighted.toFixed(2)}</td>`;
     detailsBody.appendChild(tr);
   });
+
+  // update persistent bar if record had lastCalc
+  if (LAST_CALC && LAST_CALC.latestSGPA !== null) updatePersistentBar(LAST_CALC.latestSGPA);
+
   alert('Record loaded into UI');
 }
 function deleteRecord(roll){
@@ -835,13 +1028,19 @@ clearAllBtn.addEventListener('click', ()=>{
   renderSemesters();
   inpName.value=''; inpRoll.value=''; updateProfileDisplay();
   latestSGPAEl.textContent = '—'; cgpaAllEl.textContent = '—'; detailsBody.innerHTML='';
+  persistentBar.style.display = 'none';
   alert('Cleared local saved data.');
 });
 
 /* Calculate and save handlers */
 calcAllBtn.addEventListener('click', ()=>{
   const res = calculateAll();
-  if (!res || res.latestSGPA === null) alert('No credits entered. Please add subjects and credits and fill marks.');
+  if (!res || res.latestSGPA === null) {
+    alert('No credits entered. Please add subjects and credits and fill marks.');
+    return;
+  }
+  // show the translucent popup with results and update persistent visual
+  showResultPopup(res);
 });
 saveAllBtn.addEventListener('click', ()=>{ saveAllLocal(); });
 
@@ -859,8 +1058,17 @@ function init(){
     SEMS.push(s);
   }
   renderSemesters();
+
+  // if a saved profile exists that contains a lastCalc, show persistent bar
+  const recs = loadAllLocal();
+  if (recs && recs.length) {
+    // check latest profile (not strictly necessary) — leave persistent hidden until calculation or load
+  }
 }
 init();
 </script>
+<footer>
+  Created by Himadri
+</footer>
 </body>
 </html>
