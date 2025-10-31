@@ -120,43 +120,79 @@ function addSubject(type) {
         <label>Subject Name:</label>
         <input type="text" placeholder="Enter subject name">
         <label>Credits:</label>
-        <input type="number" step="0.5" placeholder="Enter credits">
+        <input type="number" step="0.5" min="0.5" placeholder="Enter credits">
         ${type === 'theory' ? `
         <label>Mid Sem Marks (out of 30):</label>
-        <input type="number" max="30" placeholder="Enter marks">
+        <input type="number" min="0" max="30" placeholder="Enter marks">
         <label>End Sem Marks (out of 70):</label>
-        <input type="number" max="70" placeholder="Enter marks">
+        <input type="number" min="0" max="70" placeholder="Enter marks">
         ` : `
         <label>Total Marks (out of 100):</label>
-        <input type="number" max="100" placeholder="Enter marks">`}
+        <input type="number" min="0" max="100" placeholder="Enter marks">`}
     `;
     container.appendChild(box);
 }
 
 function calculateSGPA() {
     let totalPoints = 0, totalCredits = 0;
+    let hasValidSubjects = false;
     
+    // Validate and calculate for theory subjects
     document.querySelectorAll('#theory-section .subject-box').forEach(box => {
         const inputs = box.querySelectorAll('input');
-        const credit = parseFloat(inputs[1].value) || 0;
-        const mid = parseInt(inputs[2].value) || 0;
-        const end = parseInt(inputs[3].value) || 0;
+        const name = inputs[0].value.trim();
+        const credit = parseFloat(inputs[1].value);
+        const mid = parseInt(inputs[2].value);
+        const end = parseInt(inputs[3].value);
+        
+        if (isNaN(credit) || credit <= 0) {
+            alert(`Invalid credits for theory subject "${name}". Credits must be a positive number.`);
+            return;
+        }
+        if (isNaN(mid) || mid < 0 || mid > 30) {
+            alert(`Invalid mid-sem marks for theory subject "${name}". Marks must be between 0 and 30.`);
+            return;
+        }
+        if (isNaN(end) || end < 0 || end > 70) {
+            alert(`Invalid end-sem marks for theory subject "${name}". Marks must be between 0 and 70.`);
+            return;
+        }
+        
         const total = mid + end;
         const gp = getGradePoint(total);
         totalPoints += gp * credit;
         totalCredits += credit;
+        hasValidSubjects = true;
     });
 
+    // Validate and calculate for practical subjects
     document.querySelectorAll('#practical-section .subject-box').forEach(box => {
         const inputs = box.querySelectorAll('input');
-        const credit = parseFloat(inputs[1].value) || 0;
-        const total = parseInt(inputs[2].value) || 0;
+        const name = inputs[0].value.trim();
+        const credit = parseFloat(inputs[1].value);
+        const total = parseInt(inputs[2].value);
+        
+        if (isNaN(credit) || credit <= 0) {
+            alert(`Invalid credits for practical subject "${name}". Credits must be a positive number.`);
+            return;
+        }
+        if (isNaN(total) || total < 0 || total > 100) {
+            alert(`Invalid total marks for practical subject "${name}". Marks must be between 0 and 100.`);
+            return;
+        }
+        
         const gp = getGradePoint(total);
         totalPoints += gp * credit;
         totalCredits += credit;
+        hasValidSubjects = true;
     });
 
-    const sgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+    if (!hasValidSubjects) {
+        document.getElementById('result').innerHTML = "Please add valid subjects to calculate SGPA.";
+        return;
+    }
+
+    const sgpa = (totalPoints / totalCredits).toFixed(2);
     document.getElementById('result').innerHTML = `<strong>Your SGPA = ${sgpa}</strong>`;
 }
 </script>
