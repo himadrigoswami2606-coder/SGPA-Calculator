@@ -134,6 +134,49 @@
   @media (max-width:560px){
     .profile input{min-width:80px}
     .subjectRow{grid-template-columns: 1fr 70px 70px 60px}
+
+/* 📱 Mobile Responsive Fix (keeps PC layout unchanged) */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    overflow-x: hidden;
+  }
+
+  .card, .loginCard {
+    width: 95%;
+    margin: 10px auto;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  input, select, button {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .subjectRow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  h1, h2 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .add-semester-btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+  }
+}
+
   }
 </style>
 </head>
