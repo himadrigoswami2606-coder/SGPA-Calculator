@@ -5,14 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Narula University Grade Portal</title>
 <link rel="icon" href="data:," />
-
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
-  /* ===========================
-     Variables & Base
-     =========================== */
   :root{
     --bg1: #05060a;
     --bg2: #071227;
@@ -26,6 +20,7 @@
     --card-radius: 16px;
     --max-width: 1100px;
   }
+  /* light overrides */
   body.light {
     --bg1: #f3f7fb;
     --bg2: #e9f0fb;
@@ -41,15 +36,14 @@
   html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, #07142a 0%, #000 40%);color:#eaf6ff}
   body{transition:background 350ms ease,color 350ms ease}
 
-  /* Night sky / decorative stars */
   .sky {
     position: fixed; inset: 0; z-index: 0; pointer-events:none;
-    background: radial-gradient(ellipse at top left, rgba(255,255,255,0.02) 0%, transparent 10%),
-                radial-gradient(ellipse at bottom right, rgba(255,255,255,0.01) 0%, transparent 12%);
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.02) 0%, transparent 10%),
+      radial-gradient(ellipse at bottom right, rgba(255,255,255,0.01) 0%, transparent 12%);
     mix-blend-mode: overlay;
   }
 
-  /* Page layout */
   .wrap{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:48px 20px;z-index:1;position:relative}
   .card{
     width:100%;max-width:var(--max-width);padding:22px;border-radius:var(--card-radius);
@@ -71,77 +65,72 @@
   .themeToggle{display:inline-flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);cursor:pointer;color:var(--muted)}
   .themeToggle .icon{font-size:18px}
 
-  /* profile/login small form */
   .profile{display:flex;gap:8px;align-items:center;background:var(--glass);padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
   .profile input{background:transparent;border:none;color:inherit;padding:6px 8px;border-radius:8px;min-width:120px;outline:none}
   .profile .small{font-size:12px;color:var(--muted)}
 
-  /* Grid layout */
   .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
   @media (max-width:980px){ .grid{grid-template-columns:1fr} }
 
-  /* Left panel - main editor */
   .panel{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.006));border:1px solid rgba(255,255,255,0.03)}
   .sectionTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
   .sectionTitle h2{margin:0;font-size:16px;color:var(--accent)}
   .muted{font-size:13px;color:var(--muted)}
 
-  /* Tabs for SGPA / CGPA */
   .tabs{display:flex;gap:8px;margin-bottom:12px}
   .tab{padding:8px 12px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid rgba(255,255,255,0.02);color:var(--muted)}
   .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001821;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,0.25)}
 
-  /* Semesters */
   .semList{display:flex;flex-direction:column;gap:12px}
   .semester{border-radius:10px;padding:12px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.03)}
   .semHead{display:flex;align-items:center;justify-content:space-between;gap:8px}
   .semTitle{font-weight:700}
   .semControls{display:flex;gap:8px}
 
-  /* Subjects rows */
   .subjects{margin-top:10px;display:flex;flex-direction:column;gap:10px}
-  .subjectRow{display:grid;grid-template-columns: 1fr 90px 90px 90px 64px;gap:8px;align-items:center}
-  @media (max-width:780px){ .subjectRow{grid-template-columns: 1fr 80px 80px 60px} }
+  /* Now subjectRow includes type selector as first column */
+  .subjectRow{display:grid;grid-template-columns:110px 1fr 80px 90px 90px 64px;gap:8px;align-items:center}
+  @media (max-width:980px){ .subjectRow{grid-template-columns: 1fr 80px 80px 60px } }
 
-  .subjectRow input[type="text"]{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.25);color:inherit}
+  .subjectRow select,.subjectRow input[type="text"]{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.25);color:inherit}
   .subjectRow input[type="number"]{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.18);color:inherit}
   .subjectRow .removeRow{padding:6px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer}
 
-  /* Right summary panel */
   .rightPanel{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.003));border:1px solid rgba(255,255,255,0.03)}
   .cardStat{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
   .big{font-size:24px;font-weight:700;color:var(--success)}
   .actionBtn{width:100%;padding:10px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#001821;font-weight:700;cursor:pointer}
   .outline{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
 
-  /* Details table */
   table{width:100%;border-collapse:collapse;margin-top:8px}
   th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px;color:var(--muted)}
   th{color:var(--accent);font-size:13px}
 
   footer.note{margin-top:12px;font-size:12px;color:var(--muted)}
 
-  /* small helpers */
   .row{display:flex;gap:8px;align-items:center}
   .select{padding:8px;border-radius:8px;border:none;background:rgba(0,0,0,0.15);color:inherit}
   .presetDropdown{min-width:220px}
 
-  /* login overlay */
+  /* login overlay improved contrast */
   .overlay {
     position: fixed; inset: 0; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)); display:flex;align-items:center;justify-content:center;z-index:9999;
   }
   .loginCard {
-    width: 540px; max-width:94%; padding:28px; border-radius:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); box-shadow:0 20px 60px rgba(0,0,0,0.6); text-align:center;
+    width: 540px; max-width:94%; padding:28px; border-radius:14px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.55));
+    border:1px solid rgba(255,255,255,0.04); box-shadow:0 30px 80px rgba(0,0,0,0.7); text-align:center;
+    color:#fff;
   }
   .loginCard h2{margin:0 0 8px;color:var(--accent)}
-  .loginCard p{color:var(--muted);margin:0 0 18px}
-  .loginCard input{width:100%;padding:12px;border-radius:10px;border:none;background:rgba(0,0,0,0.18);color:inherit;margin-bottom:10px}
+  .loginCard p{color:rgba(255,255,255,0.75);margin:0 0 18px}
+  .loginCard input{width:100%;padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:inherit;margin-bottom:10px;outline:none}
+  .loginCard input::placeholder{color:rgba(255,255,255,0.6)}
 
   /* micro animations */
   .glow { box-shadow: 0 8px 30px rgba(0,234,255,0.06); transition: box-shadow 350ms ease; }
   .glow:hover { box-shadow: 0 12px 44px rgba(0,234,255,0.12); transform: translateY(-2px); }
 
-  /* responsiveness small */
   @media (max-width:560px){
     .profile input{min-width:80px}
     .subjectRow{grid-template-columns: 1fr 70px 70px 60px}
@@ -182,7 +171,6 @@
       </header>
 
       <div class="grid">
-        <!-- LEFT -->
         <main class="panel" aria-labelledby="semTitle">
           <div class="sectionTitle">
             <h2 id="semTitle">Semesters & Subjects</h2>
@@ -196,7 +184,6 @@
             <div class="muted">Dark / Light and local-saving supported</div>
           </div>
 
-          <!-- Controls -->
           <div style="display:flex;gap:10px;align-items:center;margin:10px 0 14px;">
             <button id="addSemesterBtn" class="actionBtn">+ Add Semester</button>
             <select id="presetSelect" class="select presetDropdown" aria-label="Choose preset">
@@ -221,7 +208,6 @@
           </div>
         </main>
 
-        <!-- RIGHT -->
         <aside class="rightPanel" aria-labelledby="summaryTitle">
           <div class="cardStat">
             <div class="small">Logged in as</div>
@@ -257,7 +243,6 @@
     </div>
   </div>
 
-  <!-- Login Overlay (shown until user saves profile or chooses skip) -->
   <div id="loginOverlay" class="overlay" style="display:none" role="dialog" aria-modal="true">
     <div class="loginCard">
       <h2>Welcome to Narula University Portal</h2>
@@ -271,7 +256,6 @@
     </div>
   </div>
 
-  <!-- Modal for saved records / compare -->
   <div id="modal" class="overlay" style="display:none">
     <div class="loginCard" style="max-width:900px;overflow:auto;padding:18px">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -284,9 +268,11 @@
 
 <script>
 /* ============================
-   Presets - initial subjects data
-   (will be replaceable by you later)
+   Small upgrades to existing JS
+   (keeps your base functions mostly intact)
    ============================ */
+
+/* Presets */
 const PRESETS = {
   "CSE First Year (R23)": [
     {name:"Computer Science (Th)", credits:3, type:'theory'},
@@ -313,9 +299,7 @@ const PRESETS = {
   ]
 };
 
-/* ---------------------------
-   Utilities
---------------------------- */
+/* Utilities */
 function getGradePoint(total) {
   if (total >= 90) return 10;
   if (total >= 80) return 9;
@@ -328,9 +312,7 @@ function getGradePoint(total) {
 function clamp(n,min,max){ return Math.max(min, Math.min(max, Number(n) || 0)); }
 function escapeHtml(s){ if (!s) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
 
-/* ---------------------------
-   State & DOM refs
---------------------------- */
+/* DOM refs */
 const semList = document.getElementById('semList');
 const presetSelect = document.getElementById('presetSelect');
 const addSemesterBtn = document.getElementById('addSemesterBtn');
@@ -359,15 +341,12 @@ const modalTitle = document.getElementById('modalTitle');
 const closeModal = document.getElementById('closeModal');
 const clearAllBtn = document.getElementById('clearAllBtn');
 
-/* Semester structure:
-   {id, label, subjects: [ {name,credits,type,mid,end,total} ] }
-*/
-let SEMS = []; // in-memory
+/* State */
+let SEMS = [];
 let LAST_CALC = { latestSGPA: null, cgpa: null, details: [] };
+let COMPARE_BUFFER = [];
 
-/* ---------------------------
-   Initialize presets dropdown
---------------------------- */
+/* Initialize preset dropdown */
 function initPresets(){
   Object.keys(PRESETS).forEach(k=>{
     const opt = document.createElement('option'); opt.value=k; opt.textContent=k;
@@ -375,16 +354,14 @@ function initPresets(){
   });
 }
 
-/* ---------------------------
-   Create new semester helper
---------------------------- */
-function newSemester(label){
-  return { id: 's'+Date.now().toString(36).slice(-6), label: label || ('Sem ' + (SEMS.length+1)), subjects: [] };
+/* New semester */
+function newSemester(label, defaultType){
+  // defaultType: 'mixed' | 'theory' | 'practical'
+  const sem = { id: 's'+Date.now().toString(36).slice(-6), label: label || ('Sem ' + (SEMS.length+1)), defaultType: defaultType || 'mixed', subjects: [] };
+  return sem;
 }
 
-/* ---------------------------
-   Render semesters UI
---------------------------- */
+/* Render semesters (updated: subject type select + dynamic fields) */
 function renderSemesters(){
   semList.innerHTML = '';
   SEMS.forEach((sem, idx)=>{
@@ -406,26 +383,58 @@ function renderSemesters(){
     semList.appendChild(el);
 
     const subjectsContainer = el.querySelector('.subjects');
+
     sem.subjects.forEach((s, sIdx)=>{
       const row = document.createElement('div'); row.className='subjectRow';
-      if (s.type === 'theory') {
-        row.innerHTML = `
-          <input type="text" class="subName" placeholder="Subject name" value="${escapeHtml(s.name)}" aria-label="Subject name">
-          <input type="number" class="subCredit" placeholder="Credits" step="0.5" min="0" value="${escapeHtml(s.credits)}" aria-label="Credits">
-          <input type="number" class="mid" placeholder="Mid (0-30)" min="0" max="30" value="${s.mid||''}" aria-label="Mid marks">
-          <input type="number" class="end" placeholder="End (0-70)" min="0" max="70" value="${s.end||''}" aria-label="End marks">
-          <button class="removeRow" data-action="remove-${sIdx}" title="Remove subject">✕</button>
-        `;
-      } else {
-        row.innerHTML = `
-          <input type="text" class="subName" placeholder="Subject name" value="${escapeHtml(s.name)}" aria-label="Subject name">
-          <input type="number" class="subCredit" placeholder="Credits" step="0.5" min="0" value="${escapeHtml(s.credits)}" aria-label="Credits">
-          <input type="number" class="total" placeholder="Total (0-100)" min="0" max="100" value="${s.total||''}" aria-label="Total marks">
-          <div></div>
-          <button class="removeRow" data-action="remove-${sIdx}" title="Remove subject">✕</button>
-        `;
-      }
+
+      // Type select, name, credits, marks fields, remove
+      // We use the type selector to show/hide theory/practical inputs
+      row.innerHTML = `
+        <select class="subType" aria-label="Type">
+          <option value="theory">Theory (30+70)</option>
+          <option value="practical">Practical (100)</option>
+        </select>
+        <input type="text" class="subName" placeholder="Subject name" value="${escapeHtml(s.name)}" aria-label="Subject name">
+        <input type="number" class="subCredit" placeholder="Credits" step="0.5" min="0" value="${escapeHtml(s.credits)}" aria-label="Credits">
+        <div class="theoryFields" style="display:none">
+          <input type="number" class="mid" placeholder="Mid (0-30)" min="0" max="30" value="${s.mid||''}" aria-label="Mid">
+          <input type="number" class="end" placeholder="End (0-70)" min="0" max="70" value="${s.end||''}" aria-label="End">
+        </div>
+        <input type="number" class="total" placeholder="Total (0-100)" min="0" max="100" value="${s.total||''}" style="display:none" aria-label="Total">
+        <button class="removeRow" data-action="remove-${sIdx}" title="Remove subject">✕</button>
+      `;
+
+      // append and then configure which fields to show according to s.type
       subjectsContainer.appendChild(row);
+
+      const typeSel = row.querySelector('.subType');
+      const nameInp = row.querySelector('.subName');
+      const creditInp = row.querySelector('.subCredit');
+      const theoryFields = row.querySelector('.theoryFields');
+      const totalInp = row.querySelector('.total');
+
+      // set initial type
+      if (!s.type) s.type = sem.defaultType === 'theory' ? 'theory' : (sem.defaultType === 'practical' ? 'practical' : (s.total ? 'practical' : 'theory'));
+      typeSel.value = s.type;
+
+      function showFieldsForType(t){
+        if (t === 'theory'){
+          theoryFields.style.display = 'grid';
+          theoryFields.style.gridTemplateColumns = '1fr 1fr';
+          totalInp.style.display = 'none';
+        } else {
+          theoryFields.style.display = 'none';
+          totalInp.style.display = 'block';
+        }
+      }
+      showFieldsForType(s.type);
+
+      // handlers: when type changes
+      typeSel.addEventListener('change', (e)=>{
+        s.type = e.target.value;
+        showFieldsForType(s.type);
+        // reset values if switching type maybe
+      });
 
       // remove handler
       row.querySelector('.removeRow').addEventListener('click', ()=>{
@@ -433,28 +442,23 @@ function renderSemesters(){
         renderSemesters();
       });
 
-      // live save on input
-      const inputs = row.querySelectorAll('input');
-      inputs.forEach(inp=>{
-        inp.addEventListener('input', ()=>{
-          const name = row.querySelector('.subName').value.trim();
-          const credits = parseFloat(row.querySelector('.subCredit').value) || 0;
-          if (s.type === 'theory') {
-            s.name = name; s.credits = credits;
-            s.mid = row.querySelector('.mid').value;
-            s.end = row.querySelector('.end').value;
-          } else {
-            s.name = name; s.credits = credits;
-            s.total = row.querySelector('.total').value;
-          }
-        });
-      });
+      // live save inputs -> update s
+      nameInp.addEventListener('input', ()=>{ s.name = nameInp.value; });
+      creditInp.addEventListener('input', ()=>{ s.credits = parseFloat(creditInp.value) || 0; });
+
+      const midInp = row.querySelector('.mid');
+      const endInp = row.querySelector('.end');
+      if (midInp) midInp.addEventListener('input', ()=>{ s.mid = midInp.value; });
+      if (endInp) endInp.addEventListener('input', ()=>{ s.end = endInp.value; });
+      if (totalInp) totalInp.addEventListener('input', ()=>{ s.total = totalInp.value; });
     });
 
-    // sem controls
+    // controls
     el.querySelector('[data-action="add-sub"]').addEventListener('click', ()=>{
-      // choose a default type (theory)
-      sem.subjects.push({name:'New Subject', credits:3, type:'theory', mid:'', end:'', total:''});
+      // add subject defaulting to semester.defaultType
+      const dtype = sem.defaultType || 'mixed';
+      const addType = (dtype === 'theory') ? 'theory' : (dtype === 'practical' ? 'practical' : 'theory');
+      sem.subjects.push({name:'New Subject', credits:3, type:addType, mid:'', end:'', total:''});
       renderSemesters();
     });
     el.querySelector('[data-action="rename"]').addEventListener('click', ()=>{
@@ -469,32 +473,25 @@ function renderSemesters(){
   });
 }
 
-/* ---------------------------
-   Apply preset to a semester
---------------------------- */
-function applyPresetToSemester(semId, presetName){
-  if (!PRESETS[presetName]) { alert('Invalid preset'); return; }
-  const preset = PRESETS[presetName];
-  const sem = SEMS.find(s=>s.id === semId);
-  if (!sem) { alert('Add a semester first'); return; }
-  preset.forEach(p=>{
-    sem.subjects.push({name:p.name, credits:p.credits, type:p.type, mid:'', end:'', total:''});
-  });
-  renderSemesters();
-}
-
-/* ---------------------------
-   Add semester button
---------------------------- */
+/* Add semester - prompt for name and default type */
 addSemesterBtn.addEventListener('click', ()=>{
-  const sem = newSemester();
+  let label = prompt('Enter semester name (leave blank for default):','Semester '+(SEMS.length+1));
+  if (label === null) return; // cancelled
+  label = label.trim() || ('Semester '+(SEMS.length+1));
+  // ask for default type
+  let dtype = prompt('Default subject type for this semester? (enter "theory", "practical", or "mixed")','mixed');
+  if (dtype === null) dtype = 'mixed';
+  dtype = dtype.toLowerCase();
+  if (!['theory','practical','mixed'].includes(dtype)) dtype = 'mixed';
+  const sem = newSemester(label, dtype);
+  // if user chose theory or practical, add a sample subject to show UI
+  if (dtype === 'theory') sem.subjects.push({name:'New Theory Subject', credits:3, type:'theory', mid:'', end:'', total:''});
+  else if (dtype === 'practical') sem.subjects.push({name:'New Practical', credits:1.5, type:'practical', mid:'', end:'', total:''});
   SEMS.push(sem);
   renderSemesters();
 });
 
-/* ---------------------------
-   Apply preset UI behavior (prompt for target sem)
---------------------------- */
+/* Apply preset to chosen semester (prompt for target) */
 applyPresetBtn.addEventListener('click', ()=>{
   if (!presetSelect.value) return alert('Choose a preset');
   if (SEMS.length === 0) { alert('Add a semester first'); return; }
@@ -505,21 +502,27 @@ applyPresetBtn.addEventListener('click', ()=>{
   if (isNaN(id) || id < 0 || id >= SEMS.length) return alert('Invalid choice');
   applyPresetToSemester(SEMS[id].id, presetSelect.value);
 });
+function applyPresetToSemester(semId, presetName){
+  if (!PRESETS[presetName]) { alert('Invalid preset'); return; }
+  const preset = PRESETS[presetName];
+  const sem = SEMS.find(s=>s.id === semId);
+  if (!sem) { alert('Add a semester first'); return; }
+  preset.forEach(p=> sem.subjects.push({name:p.name, credits:p.credits, type:p.type, mid:'', end:'', total:''}));
+  renderSemesters();
+}
 
-/* ---------------------------
-   Calculation: SGPA per semester and CGPA
---------------------------- */
+/* Calculate SGPA and CGPA (unchanged logic, but handles dynamic types) */
 function calculateAll(){
   const details = [];
   let cgpaPoints = 0;
   let cgpaCredits = 0;
   let latestSGPA = null;
 
-  SEMS.forEach((sem, semIdx) => {
+  SEMS.forEach((sem) => {
     let semPoints = 0, semCredits = 0;
     sem.subjects.forEach(s=>{
       const credit = Number(s.credits) || 0;
-      if (!(credit > 0)) return; // skip empty
+      if (!(credit > 0)) return;
       let totalMarks = 0;
       if (s.type === 'theory') {
         const mid = clamp(s.mid, 0, 30);
@@ -544,11 +547,9 @@ function calculateAll(){
 
   const cgpa = cgpaCredits > 0 ? (cgpaPoints / cgpaCredits) : null;
 
-  // update UI
   latestSGPAEl.textContent = latestSGPA === null ? '—' : latestSGPA.toFixed(2);
   cgpaAllEl.textContent = cgpa === null ? '—' : cgpa.toFixed(2);
 
-  // build details table
   detailsBody.innerHTML = '';
   details.forEach(d=>{
     const tr = document.createElement('tr');
@@ -565,13 +566,10 @@ function calculateAll(){
   return LAST_CALC;
 }
 
-/* ============================
-   CGPA Panel (manual entries)
-============================ */
+/* CGPA manual entries (unchanged) */
 const cgpaList = document.getElementById('cgpaList');
 const addCgpaRowBtn = document.getElementById('addCgpaRow');
 const calcCgpaBtn = document.getElementById('calcCgpaBtn');
-
 function addCgpaRow(sgpa='', credits=''){
   const div = document.createElement('div'); div.className='semester';
   div.innerHTML = `
@@ -585,7 +583,6 @@ function addCgpaRow(sgpa='', credits=''){
   div.querySelector('button').addEventListener('click', ()=>div.remove());
 }
 addCgpaRowBtn.addEventListener('click', ()=>addCgpaRow());
-
 calcCgpaBtn.addEventListener('click', ()=>{
   const rows = Array.from(cgpaList.querySelectorAll('.semester'));
   let totalCredits = 0, totalWeighted=0;
@@ -599,42 +596,35 @@ calcCgpaBtn.addEventListener('click', ()=>{
   cgpaAllEl.textContent = cgpa;
 });
 
-/* ---------------------------
-   Save / Load records (localStorage)
---------------------------- */
+/* Save & load records */
 function saveAllLocal(){
   const profile = {name: inpName.value.trim(), roll: inpRoll.value.trim()};
+  if (!profile.name || !profile.roll) return alert('Please enter name and roll to save record.');
   const state = { profile, semesters: SEMS, lastCalc: LAST_CALC, timestamp: Date.now() };
-  // store under a key like records (an array)
   const recordsRaw = localStorage.getItem('nu_records');
   let records = recordsRaw ? JSON.parse(recordsRaw) : [];
-  // push new record (identify by roll)
-  const id = (profile.roll || 'r_'+Date.now());
-  records = records.filter(r=>r.roll !== profile.roll); // remove previous same roll
-  records.push(Object.assign({id:id}, {name:profile.name, roll:profile.roll, data:state}));
+  records = records.filter(r=>r.roll !== profile.roll);
+  records.push(Object.assign({id:profile.roll}, {name:profile.name, roll:profile.roll, data:state}));
   localStorage.setItem('nu_records', JSON.stringify(records));
   alert('Record saved locally.');
 }
-
 function loadAllLocal(){
   const raw = localStorage.getItem('nu_records');
   if (!raw) return [];
   try { return JSON.parse(raw); } catch(e){ console.warn(e); return []; }
 }
 
-/* show modal with saved records */
+/* View saved records modal */
 viewSavedBtn.addEventListener('click', ()=>{
   const recs = loadAllLocal();
   showModalSaved(recs);
 });
-
 function showModalSaved(recs){
   modalTitle.textContent = 'Saved Records';
   if (!Array.isArray(recs) || recs.length===0){
     modalBody.innerHTML = '<p class="muted">No saved records found.</p>';
     modal.style.display='flex'; return;
   }
-  // table
   let html = `<div style="overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th>Name</th><th>Roll</th><th>SGPA</th><th>CGPA</th><th>Saved</th><th>Actions</th></tr></thead><tbody>`;
   recs.forEach(r=>{
     const sgpa = r.data.lastCalc && r.data.lastCalc.latestSGPA ? (r.data.lastCalc.latestSGPA.toFixed? r.data.lastCalc.latestSGPA.toFixed(2): r.data.lastCalc.latestSGPA) : '—';
@@ -648,48 +638,30 @@ function showModalSaved(recs){
   });
   html += `</tbody></table></div>`;
   modalBody.innerHTML = html;
-  // attach events
   Array.from(modalBody.querySelectorAll('.loadRec')).forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const roll = e.target.closest('tr').dataset.roll;
-      loadRecordToUI(roll);
-      modal.style.display='none';
-    });
+    btn.addEventListener('click', (e)=>{ const roll = e.target.closest('tr').dataset.roll; loadRecordToUI(roll); modal.style.display='none'; });
   });
   Array.from(modalBody.querySelectorAll('.compareRec')).forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const roll = e.target.closest('tr').dataset.roll;
-      addRecordToCompare(roll);
-    });
+    btn.addEventListener('click', (e)=>{ const roll = e.target.closest('tr').dataset.roll; addRecordToCompare(roll); });
   });
   Array.from(modalBody.querySelectorAll('.delRec')).forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const roll = e.target.closest('tr').dataset.roll;
-      if (!confirm('Delete this record?')) return;
-      deleteRecord(roll);
-      showModalSaved(loadAllLocal());
-    });
+    btn.addEventListener('click', (e)=>{ const roll = e.target.closest('tr').dataset.roll; if (!confirm('Delete this record?')) return; deleteRecord(roll); showModalSaved(loadAllLocal()); });
   });
-
   modal.style.display='flex';
 }
 
-/* load a record into UI (overwrite current) */
+/* Load record into UI */
 function loadRecordToUI(roll){
   const recs = loadAllLocal();
   const r = recs.find(x=>x.roll === roll);
   if (!r) return alert('Record not found');
-  // load profile
   inpName.value = r.name || ''; inpRoll.value = r.roll || '';
   updateProfileDisplay();
-  // load semesters
   SEMS = r.data.semesters || [];
   renderSemesters();
-  // load last calc
   LAST_CALC = r.data.lastCalc || {latestSGPA:null,cgpa:null,details:[]};
   latestSGPAEl.textContent = LAST_CALC.latestSGPA === null ? '—' : (LAST_CALC.latestSGPA.toFixed?LAST_CALC.latestSGPA.toFixed(2):LAST_CALC.latestSGPA);
   cgpaAllEl.textContent = LAST_CALC.cgpa === null ? '—' : (LAST_CALC.cgpa.toFixed?LAST_CALC.cgpa.toFixed(2):LAST_CALC.cgpa);
-  // build details table
   detailsBody.innerHTML = '';
   (LAST_CALC.details||[]).forEach(d=>{
     const tr = document.createElement('tr');
@@ -698,16 +670,13 @@ function loadRecordToUI(roll){
   });
   alert('Record loaded into UI');
 }
-
-/* delete record by roll */
 function deleteRecord(roll){
   let recs = loadAllLocal();
   recs = recs.filter(r=>r.roll !== roll);
   localStorage.setItem('nu_records', JSON.stringify(recs));
 }
 
-/* Compare: gather two records then show side-by-side */
-let COMPARE_BUFFER = [];
+/* Compare buffer & show compare */
 function addRecordToCompare(roll){
   const recs = loadAllLocal();
   const r = recs.find(x=>x.roll === roll);
@@ -722,23 +691,17 @@ function addRecordToCompare(roll){
   }
 }
 compareBtn.addEventListener('click', ()=>{
-  if (COMPARE_BUFFER.length < 2) {
-    alert('Use "View Saved Records" and click Compare on two records to compare. Or add them first.');
-    return;
-  }
-  showCompare(COMPARE_BUFFER[0], COMPARE_BUFFER[1]);
-  COMPARE_BUFFER = [];
+  const recs = loadAllLocal();
+  if (recs.length < 2) return alert('Need at least 2 saved records to compare. Save more records first.');
+  showModalSaved(recs);
 });
 
 function showCompare(a,b){
   modalTitle.textContent = `Compare — ${escapeHtml(a.name)} vs ${escapeHtml(b.name)}`;
-  // simple metrics: CGPA, latest SGPA, total credits
   const aSGPA = a.data.lastCalc && a.data.lastCalc.latestSGPA ? (a.data.lastCalc.latestSGPA.toFixed? a.data.lastCalc.latestSGPA.toFixed(2): a.data.lastCalc.latestSGPA): '—';
-  const bSGPA = b.data.lastCalc && b.data.lastCalc.latestSGPA ? (b.data.lastCalc.latestSGPA.toFixed? b.data.lastCalc.lastCalc: b.data.lastCalc.latestSGPA): '—';
+  const bSGPA = b.data.lastCalc && b.data.lastCalc.latestSGPA ? (b.data.lastCalc.latestSGPA.toFixed? b.data.lastCalc.latestSGPA.toFixed(2): b.data.lastCalc.latestSGPA): '—';
   const aCGPA = a.data.lastCalc && a.data.lastCalc.cgpa ? (a.data.lastCalc.cgpa.toFixed? a.data.lastCalc.cgpa.toFixed(2): a.data.lastCalc.cgpa): '—';
   const bCGPA = b.data.lastCalc && b.data.lastCalc.cgpa ? (b.data.lastCalc.cgpa.toFixed? b.data.lastCalc.cgpa.toFixed(2): b.data.lastCalc.cgpa): '—';
-
-  // build simple comparison table
   const html = `
     <div style="display:flex;gap:12px;align-items:flex-start">
       <div style="flex:1">
@@ -757,9 +720,7 @@ function showCompare(a,b){
   modal.style.display='flex';
 }
 
-/* ---------------------------
-   Export report (copy text)
---------------------------- */
+/* Export report (if export button exists) */
 document.getElementById('exportReport')?.addEventListener?.('click', ()=>{
   let text = `Narula University SGPA Report\nName: ${inpName.value||'—'}\nRoll: ${inpRoll.value||'—'}\nCGPA: ${cgpaAllEl.textContent}\nLatest SGPA: ${latestSGPAEl.textContent}\n\nDetails:\n`;
   const rows = Array.from(detailsBody.querySelectorAll('tr'));
@@ -770,22 +731,18 @@ document.getElementById('exportReport')?.addEventListener?.('click', ()=>{
   navigator.clipboard.writeText(text).then(()=>alert('Report copied to clipboard'), ()=>alert('Copy failed'));
 });
 
-/* ---------------------------
-   Save profile
---------------------------- */
+/* Save profile button */
 saveProfileBtn.addEventListener('click', ()=>{
   updateProfileDisplay();
-  saveAllLocal();
+  localStorage.setItem('nu_profile', JSON.stringify({name: inpName.value.trim(), roll: inpRoll.value.trim()}));
+  alert('Profile saved locally.');
 });
-
 function updateProfileDisplay(){
   const n = inpName.value.trim(); const r = inpRoll.value.trim();
   profileDisplay.textContent = n ? `${n} • ${r||'—'}` : '— Not set —';
 }
 
-/* ---------------------------
-   Theme toggle
---------------------------- */
+/* Theme toggle with storage */
 function setTheme(isLight){
   if (isLight) {
     document.body.classList.add('light'); themeIcon.textContent = '☀️'; themeToggle.setAttribute('aria-pressed','true');
@@ -799,15 +756,11 @@ themeToggle.addEventListener('click', ()=>{
   setTheme(!isLight);
 });
 
-/* ---------------------------
-   Modal controls
---------------------------- */
+/* Modal controls */
 closeModal.addEventListener('click', ()=>{ modal.style.display='none'; });
 modal.addEventListener('click', (e)=>{ if (e.target === modal) modal.style.display='none'; });
 
-/* ---------------------------
-   Login overlay
---------------------------- */
+/* Login overlay */
 function showLoginIfNeeded(){
   const saved = localStorage.getItem('nu_profile');
   if (saved) {
@@ -827,13 +780,9 @@ loginStart.addEventListener('click', ()=>{
   updateProfileDisplay();
   loginOverlay.style.display='none';
 });
-loginSkip.addEventListener('click', ()=>{
-  loginOverlay.style.display='none';
-});
+loginSkip.addEventListener('click', ()=>{ loginOverlay.style.display='none'; });
 
-/* ---------------------------
-   Clear All Data (local)
---------------------------- */
+/* Clear all local data */
 clearAllBtn.addEventListener('click', ()=>{
   if (!confirm('This will remove all saved records and reset UI. Continue?')) return;
   localStorage.removeItem('nu_records');
@@ -846,52 +795,23 @@ clearAllBtn.addEventListener('click', ()=>{
   alert('Cleared local saved data.');
 });
 
-/* ---------------------------
-   Main Calculate button (right panel)
---------------------------- */
+/* Calculate and save handlers */
 calcAllBtn.addEventListener('click', ()=>{
   const res = calculateAll();
-  if (!res || res.latestSGPA===null) alert('No credits entered. Please add subjects and credits and fill marks.');
+  if (!res || res.latestSGPA === null) alert('No credits entered. Please add subjects and credits and fill marks.');
 });
+saveAllBtn.addEventListener('click', ()=>{ saveAllLocal(); });
 
-/* ---------------------------
-   Save record
---------------------------- */
-saveAllBtn.addEventListener('click', ()=>{
-  const name = inpName.value.trim(); const roll = inpRoll.value.trim();
-  if (!name || !roll) return alert('Please enter Name and Roll before saving.');
-  const calc = calculateAll();
-  saveAllLocal();
-});
-
-/* ---------------------------
-   Compare button opens saved modal (two-step)
---------------------------- */
-compareBtn.addEventListener('click', ()=>{
-  const recs = loadAllLocal();
-  if (recs.length < 2) return alert('Need at least 2 saved records to compare. Save more records first.');
-  showModalSaved(recs);
-});
-
-/* ---------------------------
-   Initialize example / default semester if none
---------------------------- */
+/* Init */
 function init(){
   initPresets();
-  // theme
-  const th = localStorage.getItem('nu_theme_light'); setTheme(th==='true');
-  // load profile
+  setTheme(localStorage.getItem('nu_theme_light') === 'true');
   const prof = localStorage.getItem('nu_profile');
-  if (prof) {
-    const p = JSON.parse(prof); inpName.value = p.name||''; inpRoll.value = p.roll||''; updateProfileDisplay();
-  } else {
-    // show login overlay
-    setTimeout(()=>showLoginIfNeeded(), 300);
-  }
+  if (prof) { const p = JSON.parse(prof); inpName.value = p.name||''; inpRoll.value = p.roll||''; updateProfileDisplay(); }
+  else { setTimeout(()=>showLoginIfNeeded(), 250); }
 
-  // load any saved state? We'll start with a default semester to show UI
   if (SEMS.length === 0) {
-    const s = newSemester('Semester 1 (sample)');
+    const s = newSemester('Semester 1 (sample)', 'mixed');
     PRESETS['CSE First Year (R23)']?.forEach(p=> s.subjects.push(Object.assign({}, {name:p.name, credits:p.credits, type:p.type, mid:'', end:'', total:''})));
     SEMS.push(s);
   }
