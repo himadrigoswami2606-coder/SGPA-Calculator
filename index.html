@@ -133,14 +133,14 @@
 
   @media (max-width:560px){
     .profile input{min-width:80px}
-    .subjectRow{grid-template-columns: 1fr 70px 70px 60px}
+    .subjectRow{grid-template-columns: 1fr 70px 70px 60px;}
 }
 
 /* 📱 Mobile Responsive Fix (keeps PC layout unchanged) */
 @media (max-width: 768px) {
   body {
     padding: 10px;
-    overflow-x: hidden;
+    overflow-x: auto; /* ✅ optional, ensures smooth scrolling */
   }
 
   .card, .loginCard {
